@@ -5,7 +5,8 @@ Created on 07/02/2012
 @author: Artur Galeno Muniz
 '''
 
-import MySQLdb, random, string
+import MySQLdb, traceback
+from GeradoresDeDados import * #@UnusedWildImport
 
 class InsertEmTodoBanco(object):
     
@@ -96,46 +97,30 @@ class InsertEmTodoBanco(object):
                     del(cursor)
                     self.con.close()
                     self.con = None
-                    aux = random.randint(1,len(rows1))
+                    aux = random.randint()
                     choosed = rows1[aux-1][0]
                     values1.append(relacao[2])
                     values.append(str(choosed))
-                    
+                                                
             colunas = self.obterColunasDe(tabela)
 
             for row in colunas:                                
                 if row[0] not in [relacao[2] for relacao in self.relacionamentosDe(tabela)]:
                     values1.append(row[0])
                     if row[1][0:7] == 'varchar':
-                        tam = row[1][8:]
-                        tam = tam[:-1]
-                        z = ''.join(random.choice(string.ascii_uppercase + string.digits) for a in range(0,int(tam)))
-                        values.append(z)
+                        values.append(GeradoresDeDados.gerarVarchar(row))
                         
                     if row[1][0:4] == 'date':
-                        values.append('' + str(random.randint(2000, 2011)) + '-' + str(random.randint(01, 12)) + '-' + str(random.randint(01, 24)) + '')
+                        values.append(GeradoresDeDados.gerarDate())
                         
                     if row[1][0:3] == 'int':
-                        values.append(str(random.randint(1, 100)))
+                        values.append(GeradoresDeDados.gerarInt())
                         ''
                     if row[1][0:4] == 'char':
-                        tam = row[1][5:]
-                        tam = tam[:-1]
-                        z = ''.join(random.choice(string.ascii_uppercase) for a in range(0,int(tam)))
-                        values.append(z)
+                        values.append(GeradoresDeDados.gerarChar(row))
                         
                     if row[1][0:7] == 'decimal':
-                        tam = row[1][8:]
-                        tam = tam[:-1]
-                        tam = tam.split(',')
-                        tmp_parteDecimal = (int(tam[1]))
-                        tmp_parteInteira = int(tam[0]) - tmp_parteDecimal
-                        aux = '9'
-                        parteInteira = ''.join(aux for i in range(0,tmp_parteInteira))
-                        parteDecimal = ''.join(aux for i in range (0,tmp_parteDecimal))    
-                        z = str(random.randint(0, int(parteInteira)))
-                        z = z+'.'+str(random.randint(0, int(parteDecimal)))
-                        values.append(z)
+                        values.append(GeradoresDeDados.gerarDecimal(row))
         
             string1 = ''
             c = '\''       
@@ -161,6 +146,7 @@ class InsertEmTodoBanco(object):
                 values1 = []
                 print "1 row affected"
             except:
+                print traceback.print_exc()
                 print "Erro ao Inserir na Tabela: "+tabela
                 print "Saindo da aplicação..."
                 break

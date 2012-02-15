@@ -5,7 +5,7 @@ Created on 07/02/2012
 '''
 
 import InsertEmTodoBanco
-import Insert
+import Insert #@UnusedImport
 
 if __name__ == '__main__':
     #for a in range(0,100):
