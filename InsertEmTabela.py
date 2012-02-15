@@ -7,7 +7,7 @@ Created on 07/02/2012
 
 import MySQLdb, random, string
 
-class Insert(object):
+class InsertEmTabela(object):
     
     con = None #VARIAVEL CONEXAO
     tebelaNome = '' #NOME DA TABELA QUE SERA FEITA A INSERSÃO
@@ -71,7 +71,7 @@ class Insert(object):
                 #VALORES RANDOMICOS SERÃO ESCOLHIDOS DE ACORDO COM SEU TIPO DE CAMPO
                 values1.append(row[0])
                 if row[1][0:7] == 'varchar':
-                    z = ''.join(random.choice(string.ascii_uppercase + string.digits) for a in range(10))
+                    z = ''.join(random.choice(string.ascii_uppercase + string.digits) for a in range(10)) #@UnusedVariable
                     values.append(z)
                     
                 if row[1][0:4] == 'date':
@@ -81,7 +81,7 @@ class Insert(object):
                     values.append(str(random.randint(1, 100)))
                     
                 if row[1][0:4] == 'char':
-                    z = ''.join(random.choice(string.ascii_uppercase + string.digits) for a in range(self.chartam))
+                    z = ''.join(random.choice(string.ascii_uppercase + string.digits) for a in range(self.chartam)) #@UnusedVariable
                     values.append(z)
                     
                 if row[1][0:7] == 'decimal':
