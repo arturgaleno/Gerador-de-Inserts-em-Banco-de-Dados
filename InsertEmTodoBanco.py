@@ -7,6 +7,7 @@ Created on 07/02/2012
 
 from GeradoresDeDados import * #@UnusedWildImport
 from BD import * #@UnusedWildImport
+import re
 
 class InsertEmTodoBanco(object):
     
@@ -38,6 +39,8 @@ class InsertEmTodoBanco(object):
                 print "Com estrangeirismo na tabela: %s Coluna: %s" %(relacao[4],relacao[5])
                 print "Aparece %s veses. Verifique se esse tipo de relação é mesmo necessário." %(str(num))
                 print "Pois há referêcias ambíguas com 'CONSTRAINTS' diferentes."
+                print "Isso não indica necessariamente um erro no banco de dados. Mas se essa"
+                print "situação não foi proposital, é aconselhavel que seja verificada."
                 print ""
             if relacao not in listaDeRelacionamentos:
                 listaDeRelacionamentos.append(relacao)
@@ -77,86 +80,275 @@ class InsertEmTodoBanco(object):
             colunasChavesPrimarias = []
             chavesEstrangeiras = self.relacionamentosDe(tabela,log=True)
             
-            for coluna in colunas:
-                if coluna[3] == 'PRI':
-                    colunasChavesPrimarias.append(coluna[0])
-                    bd = BD(self.host,self.user,self.passwd,self.db)
-                    chavesPrimarias = bd.retornarLinhas("SELECT "+coluna[0]+" FROM "+tabela)
-                    controle = False
-                    while controle == False:
-                        if coluna[1][0:7] == 'varchar':
-                            gerador = GeradoresDeDados()
-                            valor = gerador.gerarVarchar(coluna)
-                            if (valor,) not in chavesPrimarias:
-                                values1.append(coluna[0])
-                                values.append(valor)
-                                controle = True
-                                                        
-                        if coluna[1][0:4] == 'date':
-                            gerador = GeradoresDeDados()
-                            valor = gerador.gerarDate()
-                            if (valor,) not in chavesPrimarias:
-                                values1.append(coluna[0])
-                                values.append(valor)
-                                controle = True
-                            
-                        if coluna[1][0:3] == 'int':
-                            gerador = GeradoresDeDados()
-                            valor = gerador.gerarInt()
-                            if (long(valor),) not in chavesPrimarias:
-                                values1.append(coluna[0])
-                                values.append(valor)
-                                controle = True
-                            
-                        if coluna[1][0:4] == 'char':
-                            gerador = GeradoresDeDados()
-                            valor = gerador.gerarChar(coluna)
-                            if (valor,) not in chavesPrimarias:
-                                values1.append(coluna[0])
-                                values.append(valor)
-                                controle = True
-                            
-                        if coluna[1][0:7] == 'decimal':
-                            gerador = GeradoresDeDados()
-                            valor = gerador.gerarDecimal(coluna)
-                            if (valor,) not in chavesPrimarias:
-                                values1.append(coluna[0])
-                                values.append(valor)
-                                controle = True
-            
             if chavesEstrangeiras != []:
                 for relacao in chavesEstrangeiras:
                     bd = BD(self.host,self.user,self.passwd,self.db) 
                     rows1 = bd.retornarLinhas('SELECT '+relacao[5]+' FROM '+relacao[4])
-                    aux = random.randint(0,len(rows1)-1)
+                    if len(rows1) == 0:
+                        "Erro! Não foram inseridas linhas na tabela: "+relacao[4]
+                    aux = random.randint(1,len(rows1))
                     choosed = rows1[aux-1][0]
                     values1.append(relacao[2])
                     values.append(str(choosed))
             
             for row in colunas:                                
                 if row[0] not in [relacao[2] for relacao in self.relacionamentosDe(tabela)]:
-                    if row[0] not in colunasChavesPrimarias:
                         values1.append(row[0])
-                        if row[1][0:7] == 'varchar':
-                            gerador = GeradoresDeDados()
-                            values.append(gerador.gerarVarchar(row))
+                        if re.search(r'^varchar',row[1]) != None:
+                            if row[3] == 'PRI':
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarVarchar(row)
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarVarchar(row))
                             
-                        if row[1][0:4] == 'date':
-                            gerador = GeradoresDeDados()
-                            values.append(gerador.gerarDate())
+                        if re.search(r'^date$',row[1]) != None:
+                            if row[3] == 'PRI':
+                               
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarDate()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarDate())
                             
-                        if row[1][0:3] == 'int':
-                            gerador = GeradoresDeDados()
-                            values.append(gerador.gerarInt())
-                            ''
-                        if row[1][0:4] == 'char':
-                            gerador = GeradoresDeDados()
-                            values.append(gerador.gerarChar(row))
-                            
-                        if row[1][0:7] == 'decimal':
-                            gerador = GeradoresDeDados()
-                            values.append(gerador.gerarDecimal(row))
-            
+                        if re.search(r'^int',row[1]) != None:
+                            if row[3] == 'PRI':
+                               
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarInt()
+                                    if (long(valor),) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarInt())
+                                    
+                        if re.search(r'^char',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarChar(row)
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarChar(row))
+                                    
+                        if re.search(r'^decimal',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarDecimal(row)
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarDecimal(row))
+                                
+                        if re.search(r'^tinyint',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarTinyInt()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarTinyInt())
+                                
+                        if re.search(r'^smallint',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarSmallInt()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarSmallInt())
+                                
+                        if re.search(r'^mediumint',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarMediumInt()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarMediumInt())
+                        
+                        if re.search(r'^bigint',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarBigInt()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarBigInt())
+                        
+                        if re.search(r'^float',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarFloat(row)
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarFloat(row))
+                                
+                        if re.search(r'^double',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarDouble(row)
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarDouble(row))
+                        
+                        if re.search(r'^datetime$',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarDateTime()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarDateTime())
+                                
+                        if re.search(r'^timestamp$',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarTimeStamp()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarTimeStamp())
+                        
+                        if re.search(r'^time$',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarTime()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarTime())
+                                
+                        if re.search(r'^year',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarYear()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarYear())
+                                
+                                
             string1 = ''
             c = '\''       
             for y in range(0, len(values) ):

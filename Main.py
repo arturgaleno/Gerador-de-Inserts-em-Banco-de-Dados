@@ -9,4 +9,4 @@ import InsertEmTodoBanco
 
 if __name__ == '__main__':
     #for a in range(0,100):
-        InsertEmTodoBanco.InsertEmTodoBanco(host='localhost',user='root',passwd='1n5p1r0n123',db='DIGITEC')
+        InsertEmTodoBanco.InsertEmTodoBanco(host='',user='',passwd='',db='')

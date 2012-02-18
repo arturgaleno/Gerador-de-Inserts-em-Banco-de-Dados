@@ -1,19 +1,42 @@
 PROJETO: “GERADOR DE INSERTS EM BANCO DE DADOS”
 AUTOR: ARTUR GALENO MUNIZ
+EMAIL: ARTURGALENOM@GMAIL.COM
 BACHARELANDO EM SISTEMAS DE INFORMAÇÃO – INSTITUTO FEDERAL DO MARANHÃO - IFMA
 LOCAL: BRASIL – MARANHÃO – SÃO LUÍS
 LINGUAGEM DE PROGRAMAÇÃO: PYTHON
 
 
-Esse script tem o objtivo de criar inserts em bancos de dados, afim de possibilitar um modo prático para gerar dados e inseri-los no banco focando o teste do mesmo.
+Esse script tem o objtivo de criar inserts em bancos de dados, afim de possibilitar um modo prático 
+para gerar dados e inseri-los no banco focando o teste do mesmo.
 
 Na versão atual ele ainda está instável, e direcionado ao SGBD MySQL 5.*
+
+Para contato: arturgalenom@gmail.com
+
+TIPOS DE DADOS SUPORTADOS ATUALMENTE:
+
+ 1. INT
+ 2. BIGINT
+ 3. MEDIUMINT
+ 4. SMALLINT
+ 5. TINYINT
+ 6. CHAR
+ 7. VARCHAR
+ 8. DATE
+ 9. DATETIME
+ 10. TIME
+ 11. TIMESTAMP
+ 12. YEAR
+ 13. DECIMAL
+ 14. DOUBLE
+ 15. FLOAT
 
 MODO DE USAR(Windows/Linux):
 
 Criar um diretório no seu sistema operacional, e salvar os arquivos do projeto na pasta.
 Editar o arquivo Main.py, da seguinte forma:
-InsertEmTodoBanco.InsertEmTodoBanco(host='<host/servidor>',user='usuario_do_banco_de_dados',passwd='<senha_do_seu_usuario',db='<nome_exato_do_banco_de_dados')
+InsertEmTodoBanco.InsertEmTodoBanco(host='<host/servidor>',user='usuario_do_banco_de_dados',
+                                    passwd='<senha_do_seu_usuario',db='<nome_exato_do_banco_de_dados')
 Fechar e salvar o arquivo
 Abrir o terminal do seu sistema operacional
 Certificar-se que o Python 2.7 está instalado em seu sistema, assim como o módulo MySQLdb

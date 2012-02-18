@@ -5,7 +5,7 @@ Created on 15/02/2012
 @author: artur
 '''
 
-import MySQLdb
+import MySQLdb, sys
 
 class BD(object):
     
@@ -15,8 +15,8 @@ class BD(object):
         try:
             self.con = MySQLdb.connect(host,user,passwd,db)
         except:
-            print "Conexão com o banco NÃO realizada. Seguindo paramêtros de conexão: Servidor: %s, Usuário: %s,\
-             Senha: ****, Banco de Dados: %s" %(self.host,self.user,self.bd)
+            print "Conexão com o banco NÃO realizada. Seguindo paramêtros de conexão: Servidor: %s, Usuário: %s, Senha: %s, Banco de Dados: %s" %(host,user,passwd,db)
+            sys.exit(0)
     
     def retornarLinhas(self,query=''):
         try:
@@ -52,3 +52,5 @@ class BD(object):
             print "Foi gerado um erro: ",detail
             print ''
             raise Exception
+        
+    

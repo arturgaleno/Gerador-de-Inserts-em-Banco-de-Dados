@@ -46,17 +46,17 @@ class GeradoresDeDados(object):
         z = z+'.'+str(random.randint(0, int(parteDecimal)))
         return z
     def gerarTinyInt(self):
-        return self.gerarInt(de=-128,ate=127)
+        return self.gerarInt(de=0,ate=127)
     def gerarBit(self):
         return self.gerarInt(de=0, ate=1)
     def gerarSmallInt(self):
-        return self.gerarInt(de=-32768, ate=32767)
+        return self.gerarInt(de=0, ate=32767)
     def gerarMediumInt(self):
-        return self.gerarInt(de=-8388608, ate=8388607)
+        return self.gerarInt(de=0, ate=8388607)
     def gerarBigInt(self):
-        return self.gerarInt(de=-9223372036854775808, ate=-9223372036854775807)
+        return self.gerarInt(de=0, ate=9223372036854775807)
     def gerarFloat(self,row):
-        tam = row[1][8:]
+        tam = row[1][6:]
         tam = tam[:-1]
         tam = tam.split(',')
         tmp_parteDecimal = (int(tam[1]))
@@ -68,7 +68,7 @@ class GeradoresDeDados(object):
         z = z+'.'+str(random.randint(0, int(parteDecimal)))
         return z
     def gerarDouble(self,row):
-        tam = row[1][8:]
+        tam = row[1][7:]
         tam = tam[:-1]
         tam = tam.split(',')
         tmp_parteDecimal = (int(tam[1]))
@@ -81,12 +81,15 @@ class GeradoresDeDados(object):
         return z
     def gerarDateTime(self,de=2000,ate=2012):
         z = ('' + str(random.randint(de,ate)) + '-' + str(random.randint(01, 12)) + '-' + str(random.randint(01, 24)) + '')
-        z = z + ('' + str(random.randint(0,23)) + '-' + str(random.randint(0, 59)) + '-' + str(random.randint(0, 59)) + '')
+        z = z + (' ' + str(random.randint(0,23)) + ':' + str(random.randint(0, 59)) + ':' + str(random.randint(0, 59)) + '')
         return z
     def gerarTimeStamp(self,de=2000,ate=2012):
         z = ('' + str(random.randint(de,ate)) + '-' + str(random.randint(01, 12)) + '-' + str(random.randint(01, 24)) + '')
-        z = z + ('' + str(random.randint(0,23)) + '-' + str(random.randint(0, 59)) + '-' + str(random.randint(0, 59)) + '')
+        z = z + (' ' + str(random.randint(0,23)) + ':' + str(random.randint(0, 59)) + ':' + str(random.randint(0, 59)) + '')
         return z
     def gerarYear(self,de=2000,ate=2012):
         z = ('' + str(random.randint(de,ate)))
+        return z
+    def gerarTime(self):
+        z = '' + str(random.randint(0,23)) + ':' + str(random.randint(0, 59)) + ':' + str(random.randint(0, 59)) + ''
         return z
