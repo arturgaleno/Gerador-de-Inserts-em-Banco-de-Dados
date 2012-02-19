@@ -40,6 +40,7 @@ class BD(object):
             cursor = self.con.cursor()
             cursor.execute(query)
             cursor.close()
+            self.con.commit()
             del cursor
             self.con.close()
             self.con = None

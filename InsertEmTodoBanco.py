@@ -75,7 +75,6 @@ class InsertEmTodoBanco(object):
         for tabela in tabelas:
             print "Gerando Insert para Tabela: "+tabela
 
-            bd = BD(self.host,self.user,self.passwd,self.db)
             colunas = self.obterColunasDe(tabela)
             colunasChavesPrimarias = []
             chavesEstrangeiras = self.relacionamentosDe(tabela,log=True)
@@ -84,10 +83,8 @@ class InsertEmTodoBanco(object):
                 for relacao in chavesEstrangeiras:
                     bd = BD(self.host,self.user,self.passwd,self.db) 
                     rows1 = bd.retornarLinhas('SELECT '+relacao[5]+' FROM '+relacao[4])
-                    if len(rows1) == 0:
-                        "Erro! Não foram inseridas linhas na tabela: "+relacao[4]
-                    aux = random.randint(1,len(rows1))
-                    choosed = rows1[aux-1][0]
+                    aux = random.randint(0,len(rows1)-1)
+                    choosed = rows1[aux][0]
                     values1.append(relacao[2])
                     values.append(str(choosed))
             
