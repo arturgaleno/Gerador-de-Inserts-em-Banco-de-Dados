@@ -23,6 +23,9 @@ class InsertEmTabela(object):
         self.passwd = passwd
         self.db = db
         self.tabela = tabela
+        if host == '' or user == '' or passwd == '' or db == '' or tabela == '':
+            print "Parâmetros de conexão inválidos"
+            sys.exit(0)
         self.criarInsert()
     
     def criarInsert(self):        
