@@ -42,12 +42,14 @@ class InsertEmTabela(object):
         colunasChavesPrimarias = []
         chavesEstrangeiras = bd.relacionamentosDe(self.tabela,log=True)
         bd.fecharConexao()
+        flagAutoRelacionamento = False
         
         if chavesEstrangeiras != []:
             for relacao in chavesEstrangeiras:
                 bd = BD(self.host,self.user,self.passwd,self.db) 
                 rows1 = bd.retornarLinhas('SELECT '+relacao[5]+' FROM '+relacao[4])
                 if (relacao[0]+'.'+relacao[1] == relacao[3]+'.'+relacao[4]) and rows1 == ():
+                    flagAutoRelacionamento = True
                     pass
                 else:    
                     if rows1 == ():
@@ -315,6 +317,23 @@ class InsertEmTabela(object):
                         else:
                             gerador = GeradoresDeDados()
                             values.append(gerador.gerarYear())
+                    
+                    if re.search(r'^longblob$',row[1]) != None:
+                            if row[3] == 'PRI':
+                                
+                                colunasChavesPrimarias.append(row[0])
+                                bd = BD(self.host,self.user,self.passwd,self.db)
+                                chavesPrimarias = bd.retornarLinhas("SELECT "+row[0]+" FROM "+self.tabela)
+                                controle = False
+                                while controle == False:
+                                    gerador = GeradoresDeDados()
+                                    valor = gerador.gerarLongBlob()
+                                    if (valor,) not in chavesPrimarias:
+                                        values.append(valor)
+                                        controle = True
+                            else:
+                                gerador = GeradoresDeDados()
+                                values.append(gerador.gerarLongBlob())
                             
                             
         string1 = ''
@@ -333,4 +352,9 @@ class InsertEmTabela(object):
             values = []
             values1 = []
         except:
+            if flagAutoRelacionamento == True:
+                    print 'Se o erro gerado foi o 1452(MySQL 5.5), especificamente "a foreign key constraint fails".'
+                    print 'Verifique se a coluna que gera o auto relacionamento, está aceitando NULL. Caso contrário,'
+                    print 'isso quer dizer que toda linha terá obrigatóriamente uma auto-relacão, sendo assim, a primeira'
+                    print 'insersão deverá ter como chave estrangeira sua própia chave primária'
             print "Saindo da aplicação..."

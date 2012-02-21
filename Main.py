@@ -3,7 +3,7 @@ Created on 07/02/2012
 
 @author: Artur Galeno Muniz
 '''
-import InsertEmTodoBanco
+#import InsertEmTodoBanco
 #from AssistenteDeDelecao import * #@UnusedWildImport
 #import InsertEmTabela
 

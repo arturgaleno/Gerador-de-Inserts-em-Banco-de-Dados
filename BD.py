@@ -101,12 +101,21 @@ class BD(object):
         bd = BD(self.host,self.user,self.passwd,self.db)
         tabelas = bd.retornarLinhas("SHOW TABLES")
         pilha = []
+        tmp_pilha  = []
         for tabela in tabelas:
-            if tabela[0] not in pilha:
-                aux = self.relacionamentosDe(tabela[0])  
-                if aux != None:
-                    for relacionamento in aux:
-                        if relacionamento[4] not in pilha:
-                            pilha.append(relacionamento[4])
-            if tabela[0] not in pilha: pilha.append(tabela[0])
+            relacoes = self.relacionamentosDe(tabela[0])
+            if relacoes == []:
+                pilha.append(tabela[0])
+        for tabela in tabelas:
+            if tabela[0] not in pilha and tabela[0] not in tmp_pilha:
+                tmp_pilha.append(tabela[0])
+                relacoes = self.relacionamentosDe(tabela[0])
+                while relacoes != []:
+                    relacao = relacoes.pop(0)
+                    if relacao[4] not in pilha and relacao[4] not in tmp_pilha:
+                        tmp_pilha.append(relacao[4])
+                        relacoes = self.relacionamentosDe(relacao[4])
+                tmp_pilha.reverse()
+                pilha.extend(tmp_pilha)
+                tmp_pilha = []
         return pilha

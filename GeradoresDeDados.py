@@ -93,3 +93,5 @@ class GeradoresDeDados(object):
     def gerarTime(self):
         z = '' + str(random.randint(0,23)) + ':' + str(random.randint(0, 59)) + ':' + str(random.randint(0, 59)) + ''
         return z
+    def gerarLongBlob(self):
+        return 'LongBlob'
