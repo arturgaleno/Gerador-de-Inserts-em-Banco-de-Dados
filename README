@@ -9,7 +9,10 @@ LINGUAGEM DE PROGRAMAÇÃO: PYTHON
 Esse script tem o objtivo de criar inserts em bancos de dados, afim de possibilitar um modo prático 
 para gerar dados e inseri-los no banco focando o teste do mesmo.
 
-Na versão atual ele ainda está instável, e direcionado ao SGBD MySQL 5.*
+Na versão atual ele ainda está instável, e direcionado ao SGBD MySQL 5.*.
+
+TO DO: Continuar a implementação do método "todosRelacionamentos" de BD.py para tratar a ordem dos relacionamentos
+como um Grafo e não uma pilha.
 
 Para contato: arturgalenom@gmail.com
 
